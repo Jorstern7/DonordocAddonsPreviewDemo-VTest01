@@ -286,10 +286,29 @@ function initStickyHeader() {
 }
 
 function initNavScroll() {
-  const sections = document.querySelectorAll("section[id]");
-  const navLinks = document.querySelectorAll(
-    '.navbar-nav a[href^="#"], .nav a[href^="#"]',
+  /** Maps each section id to the nav hash that should stay active for that section or group. */
+  const sectionToNavHash = {
+    "health-cta": "#health-cta",
+    featured: "#health-cta",
+    "about-cta": "#about-cta",
+    "services-cta": "#services-cta",
+    "pricing-cta": "#services-cta",
+    "doctors-cta": "#services-cta",
+    "find-doctor-cta": "#services-cta",
+    "testimonials-cta": "#testimonials-cta",
+    "morehelp-cta": "#morehelp-cta",
+    "appointment-cta": "#appointment-cta",
+    "contact-cta": "#appointment-cta",
+  };
+
+  const sections = Array.from(document.querySelectorAll("section[id]")).filter(
+    (s) => Object.prototype.hasOwnProperty.call(sectionToNavHash, s.id),
   );
+
+  const navLinks = document.querySelectorAll(
+    '#navbarSupportedContent .navbar-nav a[href^="#"]:not([href="#"]), #offcanvasNavbar .nav.navbar-nav.flex-column a[href^="#"]:not([href="#"])',
+  );
+
   const linkMap = {};
   navLinks.forEach((link) => {
     const href = link.getAttribute("href");
@@ -297,33 +316,48 @@ function initNavScroll() {
     linkMap[href].push(link);
   });
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const visible = entries.filter((e) => e.isIntersecting);
-      if (!visible.length) return;
+  const getScrollAnchorPx = () => {
+    const header = document.getElementById("header");
+    const h = header ? header.offsetHeight : 0;
+    return h + 24;
+  };
 
-      const topmost = visible.reduce((a, b) =>
-        a.boundingClientRect.top < b.boundingClientRect.top ? a : b,
-      );
+  const updateActiveNav = () => {
+    const anchorPx = getScrollAnchorPx();
+    const docEl = document.documentElement;
+    const scrollBottom = window.innerHeight + window.scrollY;
 
-      const hash = `#${topmost.target.id}`;
+    let activeHash = "#health-cta";
 
-      if (window.innerWidth > 768) {
-        history.replaceState(null, null, hash);
+    const atBottom = scrollBottom >= docEl.scrollHeight - 2;
+    if (atBottom) {
+      activeHash = "#appointment-cta";
+    } else {
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= anchorPx) {
+          activeHash = sectionToNavHash[section.id] || activeHash;
+        }
       }
+    }
 
-      navLinks.forEach((l) => l.classList.remove("active"));
-      if (linkMap[hash]) {
-        linkMap[hash].forEach((l) => l.classList.add("active"));
-      }
-    },
-    {
-      threshold: 0.2,
-      rootMargin: "-60px 0px -30% 0px",
-    },
-  );
+    if (window.innerWidth > 768) {
+      history.replaceState(null, null, activeHash);
+    }
 
-  sections.forEach((section) => observer.observe(section));
+    navLinks.forEach((l) => l.classList.remove("active"));
+    const group = linkMap[activeHash];
+    if (group) {
+      group.forEach((l) => l.classList.add("active"));
+    }
+  };
+
+  const throttledUpdate = throttle(updateActiveNav, 50);
+  window.addEventListener("scroll", throttledUpdate, { passive: true });
+  window.addEventListener("resize", throttledUpdate);
+  window.addEventListener("load", throttledUpdate);
+  updateActiveNav();
 }
 
 function initMobileMenu() {
@@ -340,7 +374,7 @@ function initMobileMenu() {
   }
 
   const offcanvasLinks = document.querySelectorAll(
-    '.offcanvas-body li:not(.dropdown) a[href^="#"]',
+    '.offcanvas-body li a[href^="#"]:not([href="#"])',
   );
   offcanvasLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -720,28 +754,6 @@ function initBlogSection() {
 }
 
 function initDropdownBehaviors() {
-  const navDropdownToggle = document.querySelector(
-    ".nav-item.dropdown .nav-link.dropdown-toggle",
-  );
-  const navDropdownMenu = document.querySelector(
-    ".nav-item.dropdown .dropdown-menu",
-  );
-
-  if (navDropdownToggle && navDropdownMenu) {
-    navDropdownToggle.addEventListener("click", function (e) {
-      if (window.innerWidth < 1024) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        document.querySelectorAll(".dropdown-menu.show").forEach((menu) => {
-          if (menu !== navDropdownMenu) menu.classList.remove("show");
-        });
-        navDropdownMenu.classList.toggle("show");
-      }
-    });
-
-    setupDropdownCloseBehavior(navDropdownToggle, navDropdownMenu);
-  }
-
   const appointmentSection = document.querySelector("#appointment-cta");
   if (appointmentSection) {
     const appointmentSelects =
@@ -805,45 +817,27 @@ function initDropdownBehaviors() {
 }
 
 function initNavLinkEffects() {
-  const allLinks = document.querySelectorAll(
-    ".navbar-nav .nav-link, .navbar-nav .dropdown-item",
+  const mainNavLinks = document.querySelectorAll(
+    "#navbarSupportedContent .navbar-nav.ms-auto > .nav-item > .nav-link",
   );
-  const dropdown = document.querySelector(".nav-item.dropdown");
-  if (!allLinks.length || !dropdown) return;
+  if (!mainNavLinks.length) return;
 
   if (window.innerWidth >= 992) {
-    const dropdownToggle = dropdown.querySelector(".nav-link");
-
-    allLinks.forEach((link) => {
+    mainNavLinks.forEach((link) => {
       link.style.transition = "opacity 0.3s ease";
     });
 
-    const handleLinkHover = (hoveredLink) => {
-      allLinks.forEach((other) => {
-        if (hoveredLink.classList.contains("dropdown-item")) {
-          other.style.opacity =
-            other === hoveredLink || other === dropdownToggle ? "1" : "0.3";
-        } else if (hoveredLink === dropdownToggle) {
-          other.style.opacity =
-            other === dropdownToggle ||
-            other.classList.contains("dropdown-item")
-              ? "1"
-              : "0.3";
-        } else {
-          other.style.opacity = other === hoveredLink ? "1" : "0.3";
-        }
+    mainNavLinks.forEach((link) => {
+      link.addEventListener("mouseenter", () => {
+        mainNavLinks.forEach((other) => {
+          other.style.opacity = other === link ? "1" : "0.3";
+        });
       });
-    };
-
-    allLinks.forEach((link) => {
-      link.addEventListener("mouseenter", () => handleLinkHover(link));
       link.addEventListener("mouseleave", () => {
-        allLinks.forEach((l) => (l.style.opacity = "1"));
+        mainNavLinks.forEach((l) => {
+          l.style.opacity = "1";
+        });
       });
-    });
-
-    dropdown.addEventListener("mouseleave", () => {
-      allLinks.forEach((link) => (link.style.opacity = "1"));
     });
   }
 }
@@ -858,18 +852,6 @@ function scaleMiddleSlide(swiper) {
   if (visibleSlides.length === 3) {
     visibleSlides[1].classList.add("is-scaled");
   }
-}
-
-function setupDropdownCloseBehavior(toggle, menu) {
-  document.addEventListener("click", function (e) {
-    const isClickInside = toggle.contains(e.target) || menu.contains(e.target);
-    if (!isClickInside) menu.classList.remove("show");
-  });
-
-  const links = menu.querySelectorAll("a");
-  links.forEach((link) => {
-    link.addEventListener("click", () => menu.classList.remove("show"));
-  });
 }
 
 function closeAllDropdowns(allDropdowns, exceptThis = null) {

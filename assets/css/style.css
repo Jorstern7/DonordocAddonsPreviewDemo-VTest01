@@ -770,43 +770,6 @@ footer {
 #header nav.navbar-light .navbar-toggler.opened span:last-child {
   transform: rotate(-45deg);
 }
-#header nav ul.dropdown-menu {
-  top: 100%;
-  left: 0;
-  margin-top: 10px;
-  background-color: #37b24d;
-  border-radius: 4px;
-  padding: 10px 10px 10px 0px;
-  transition: all 2s ease;
-  min-width: auto;
-  padding-right: 0;
-}
-#header nav ul.dropdown-menu li a {
-  color: white;
-}
-#header nav ul.dropdown-menu li a:hover {
-  color: #37b24d;
-  background-color: white;
-}
-#header nav ul.dropdown-menu li a:active {
-  color: #37b24d;
-  background-color: white;
-}
-#header nav .dropdown-menu {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  display: block !important;
-  visibility: hidden;
-  pointer-events: none;
-  height: auto !important;
-}
-#header nav .dropdown-menu.show {
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-  pointer-events: auto;
-}
 #header nav ul:not(.dropdown-menu) {
   gap: 30px;
   align-items: center;
@@ -843,9 +806,8 @@ footer {
   color: #fff;
   transition: all 0.2s ease;
 }
-#header nav .collapse.navbar-collapse ul.dropdown-menu {
-  left: auto;
-  right: -12px;
+#header nav ul:not(.dropdown-menu) > li > a.btn::before {
+  display: none;
 }
 #header nav .offcanvas {
   backdrop-filter: blur(5px);
@@ -881,28 +843,6 @@ footer {
   justify-content: center;
   padding: 0 1rem;
 }
-#header nav .offcanvas .offcanvas-body a#navbarDropdown {
-  display: inline-block;
-}
-#header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] {
-  position: relative;
-  background-color: transparent;
-  border: 0;
-  min-width: auto;
-  top: 0;
-}
-#header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li {
-  margin-top: 3px;
-  margin-bottom: 3px;
-}
-#header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li a {
-  font-size: 14px;
-  color: #333;
-  padding: 8px 8px;
-  border-radius: 9px;
-  display: flex;
-  justify-content: center;
-}
 #header nav .offcanvas .offcanvas-body ul {
   gap: 0px;
 }
@@ -929,41 +869,6 @@ footer {
 }
 #header nav .offcanvas .offcanvas-footer p a:hover {
   text-decoration: underline;
-}
-@media (max-width: 1023.98px) {
-  #header nav .dropdown-menu {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-    display: none !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-    height: auto !important;
-    margin-top: 0 !important;
-    border: none !important;
-    padding: 0 !important;
-  }
-  #header nav .dropdown-menu.show {
-    display: block !important;
-    animation: fadeIn 0.3s ease;
-  }
-}
-@media (min-width: 1024px) {
-  #header nav .dropdown-menu {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    display: block !important;
-    visibility: hidden;
-    pointer-events: none;
-    height: auto !important;
-  }
-  #header nav .dropdown-menu.show {
-    opacity: 1;
-    transform: translateY(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
 }
 
 .offcanvas.show {
@@ -1031,7 +936,8 @@ main .section-health .header-swiper img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 main .section-featured {
   padding: 50px 0 30px 0;
@@ -1065,7 +971,8 @@ main .section-featured .swiper-slide a {
 main .section-featured .swiper-slide a img {
   max-height: 100%;
   width: 100%;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   filter: brightness(0);
   opacity: 50%;
   transition: all 0.3s ease-in-out;
@@ -1160,7 +1067,6 @@ main .services-section h1 {
   font-weight: bold;
 }
 main .services-section .flip {
-  -webkit-perspective: 800px;
   perspective: 800px;
   position: relative;
   text-align: center;
@@ -1181,9 +1087,7 @@ main .services-section .flip {
 }
 main .services-section .flip .card {
   min-height: 310px;
-  -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  -webkit-transition: transform 0.6s ease;
   transition: transform 0.6s ease;
   background-color: transparent;
   border-radius: 9px;
@@ -1198,11 +1102,9 @@ main .services-section .flip .card {
   }
 }
 main .services-section .flip .card.flipped {
-  -webkit-transform: rotatey(-180deg);
   transform: rotatey(-180deg);
 }
 main .services-section .flip .card .card-body {
-  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   position: absolute;
   top: 0;
@@ -1240,6 +1142,7 @@ main .services-section .flip .card .card-body.front .learn-more-btn {
   padding: 6.5px 20px;
   left: 0;
   right: 0;
+  width: -moz-max-content;
   width: max-content;
   margin: 0 auto;
   background-color: #37b24d;
@@ -1250,7 +1153,6 @@ main .services-section .flip .card .card-body.front .service-box-info {
   padding-bottom: 0;
 }
 main .services-section .flip .card .card-body.back {
-  -webkit-transform: rotatey(180deg);
   transform: rotatey(180deg);
   z-index: 1;
 }
@@ -1666,7 +1568,8 @@ main .doctor-section .card .card-body {
 main .doctor-section .card .card-body img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   aspect-ratio: 4/3;
   border-radius: 9px 0 0 9px;
 }
@@ -1884,7 +1787,8 @@ main .section-testimonial .card .card-body .circle-container .img-wrapper {
 main .section-testimonial .card .card-body .circle-container .img-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 main .section-testimonial .card .card-body h4 {
   font-size: 24px;
@@ -1986,7 +1890,8 @@ main .blog-section .card .card-footer .post-author img {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   border: 2px solid #ddd;
 }
 main .blog-section .card .card-footer .post-author h6 {
@@ -2071,7 +1976,8 @@ main .blog-section .blog-card .blog-card-content {
 main .blog-section .blog-card .card-img-top {
   width: 100%;
   height: 200px;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   border-radius: 20px 20px 0 0;
   display: block;
 }
@@ -2096,6 +2002,7 @@ main .blog-section .blog-card .blog-pill {
   background: #e5f5eb;
   border-radius: 999px;
   padding: 0.5rem 1rem;
+  width: -moz-fit-content;
   width: fit-content;
   margin-bottom: 10px;
 }
@@ -2421,6 +2328,7 @@ main .blog-section .blog-card .card-footer {
     height: 148.2px;
   }
   main .appointment-form-section .btn-outline {
+    width: -moz-max-content;
     width: max-content;
   }
 }
@@ -2438,18 +2346,10 @@ main .blog-section .blog-card .card-footer {
     display: flex;
     justify-content: center;
   }
-  #header nav ul:not(.dropdown-menu) > li:not(.dropdown) > a.active,
-  #header nav ul:not(.dropdown-menu) > li:not(.dropdown) > a:hover {
+  #header nav ul:not(.dropdown-menu) > li > a.active,
+  #header nav ul:not(.dropdown-menu) > li > a:hover {
     color: #fff;
     background: linear-gradient(to right, #37b24d, #1ea99d);
-  }
-  #header nav ul:not(.dropdown-menu) > li.dropdown > a {
-    color: #333;
-  }
-  #header nav ul:not(.dropdown-menu) > li.dropdown > a.show,
-  #header nav ul:not(.dropdown-menu) > li.dropdown > a:hover {
-    color: #fff;
-    background-color: #37b24d;
   }
   .offcanvas-body ul li {
     margin-bottom: 16px;
@@ -2457,15 +2357,11 @@ main .blog-section .blog-card .card-footer {
   #header nav ul:not(.dropdown-menu) > li > a {
     font-size: 18px;
   }
-  #header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li {
-    margin-top: 6px;
-    margin-bottom: 6px;
-  }
-  #header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li a {
-    font-size: 16px;
-  }
   #header nav ul:not(.dropdown-menu) > li > a::before {
     display: none;
+  }
+  #header nav ul:not(.dropdown-menu) > li > a.btn {
+    width: 100%;
   }
   .cta-group {
     justify-content: center;
@@ -2489,6 +2385,7 @@ main .blog-section .blog-card .card-footer {
     display: none;
   }
   main .appointment-form-section .btn-outline {
+    width: -moz-max-content;
     width: max-content;
   }
   main .services-section .flip .card {
@@ -2599,16 +2496,6 @@ main .blog-section .blog-card .card-footer {
   #footer .footer-section .heading-four {
     margin: 20px 0 15px;
   }
-  #header nav ul:not(.dropdown-menu) > li > a.btn {
-    width: 100%;
-  }
-  #header nav ul.dropdown-menu[data-bs-popper] {
-    margin: 0;
-  }
-  #header nav ul.dropdown-menu[data-bs-popper] li a {
-    display: flex;
-    justify-content: center;
-  }
   .heading-four,
   main .find-a-doc-section p.heading-four,
   main .section-testimonial p.heading-four,
@@ -2627,7 +2514,8 @@ main .blog-section .blog-card .card-footer {
   }
   main .blog-section .card .card-img-top {
     height: 100%;
-    object-fit: cover;
+    -o-object-fit: cover;
+       object-fit: cover;
     border-radius: 9px 0 0 9px;
   }
   main .blog-section .card .card-body p {
@@ -2698,7 +2586,8 @@ main .blog-section .blog-card .card-footer {
   }
   main .doctor-section .card .card-body img {
     border-radius: 9px 9px 0 0;
-    object-position: top;
+    -o-object-position: top;
+       object-position: top;
   }
 }
 @media (max-width: 767.98px) {
@@ -2710,13 +2599,6 @@ main .blog-section .blog-card .card-footer {
   }
   #header nav ul:not(.dropdown-menu) > li > a {
     font-size: 16px;
-  }
-  #header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li {
-    margin-top: 3px;
-    margin-bottom: 3px;
-  }
-  #header nav .offcanvas .offcanvas-body ul.dropdown-menu[data-bs-popper] li a {
-    font-size: 14px;
   }
   main .services-section .flip .card .card-body.back .learn-more-btn {
     bottom: -20px;
@@ -2796,7 +2678,8 @@ main .blog-section .blog-card .card-footer {
   }
   main .blog-section .card .card-img-top {
     height: 100%;
-    object-fit: cover;
+    -o-object-fit: cover;
+       object-fit: cover;
     border-radius: 9px 0 0 9px;
   }
   main .blog-section .card .card-body p {
@@ -2814,6 +2697,7 @@ main .blog-section .blog-card .card-footer {
     text-align: center;
   }
   main .appointment-form-section .btn-outline {
+    width: -moz-max-content;
     width: max-content;
   }
   main .section-pricing .container:before {
@@ -2856,7 +2740,8 @@ main .blog-section .blog-card .card-footer {
   main .blog-section .blog-card .card-img-top {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    -o-object-fit: cover;
+       object-fit: cover;
     border-radius: 0;
     display: block;
   }
@@ -2881,6 +2766,7 @@ main .blog-section .blog-card .card-footer {
     background: #e5f5eb;
     border-radius: 999px;
     padding: 0.5rem 1rem;
+    width: -moz-fit-content;
     width: fit-content;
     margin-bottom: 10px;
   }
@@ -2932,7 +2818,8 @@ main .blog-section .blog-card .card-footer {
   }
   main .doctor-section .card .card-body img {
     border-radius: 9px 9px 0 0;
-    object-position: top;
+    -o-object-position: top;
+       object-position: top;
   }
   main .section-health {
     padding: 50px 0 50px 0;
@@ -3172,4 +3059,4 @@ main .blog-section .blog-card .card-footer {
   main .section-health .header-swiper {
     display: none;
   }
-}
+}/*# sourceMappingURL=style.css.map */
