@@ -2399,6 +2399,34 @@ main {
         display: none !important;
       }
     }
+
+    .blog-image-loading {
+      position: relative;
+
+      img {
+        opacity: 0;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 28px;
+        height: 28px;
+        margin: -14px 0 0 -14px;
+        border: 2px solid #e0e0e0;
+        border-top-color: #37b24d;
+        border-radius: 50%;
+        animation: blog-image-spin 0.6s linear infinite;
+      }
+    }
+  }
+
+  @keyframes blog-image-spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 

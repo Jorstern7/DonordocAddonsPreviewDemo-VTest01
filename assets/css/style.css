@@ -2061,6 +2061,30 @@ main .blog-section .blog-card .blog-read-more:hover svg {
 main .blog-section .blog-card .card-footer {
   display: none !important;
 }
+main .blog-section .blog-image-loading {
+  position: relative;
+}
+main .blog-section .blog-image-loading img {
+  opacity: 0;
+}
+main .blog-section .blog-image-loading::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 2px solid #e0e0e0;
+  border-top-color: #37b24d;
+  border-radius: 50%;
+  animation: blog-image-spin 0.6s linear infinite;
+}
+@keyframes blog-image-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 #footer .footer-section {
   padding: 50px 0;
