@@ -311,6 +311,17 @@
   font-weight: 600;
 }
 
+.fl-timelist-option--disabled,
+.fl-timelist-option:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.fl-timelist-option--disabled:hover,
+.fl-timelist-option:disabled:hover {
+  background: transparent;
+}
+
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 576px) {
   .fl-calendar {

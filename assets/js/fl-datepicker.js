@@ -34,6 +34,7 @@
     closeOnSelectDelay: 0,
     timeStep: 15,
     errorMessage: "This field is required.",
+    disabledTimes: [],
   };
 
   /* ── Helpers ────────────────────────────────────────────────────── */
@@ -382,9 +383,19 @@
         btn.setAttribute("role", "option");
         btn.dataset.value = label;
 
-        if (this.selectedTimeValue === label) {
+        var disabled =
+          Array.isArray(this.opts.disabledTimes) &&
+          this.opts.disabledTimes.indexOf(label) !== -1;
+
+        if (!disabled && this.selectedTimeValue === label) {
           btn.classList.add("fl-timelist-option--selected");
           btn.setAttribute("aria-selected", "true");
+        }
+
+        if (disabled) {
+          btn.classList.add("fl-timelist-option--disabled");
+          btn.setAttribute("aria-disabled", "true");
+          btn.disabled = true;
         }
 
         this.timeListEl.appendChild(btn);
@@ -394,7 +405,11 @@
     // Click delegation
     this.timeListEl.onclick = function (ev) {
       var target = ev.target;
-      if (target.classList.contains("fl-timelist-option")) {
+      if (
+        target.classList.contains("fl-timelist-option") &&
+        !target.classList.contains("fl-timelist-option--disabled") &&
+        !target.disabled
+      ) {
         self.selectedTimeValue = target.dataset.value;
         self.input.value = target.dataset.value;
         self._clearError();
@@ -561,7 +576,9 @@
     if (!focused) return;
 
     var allOpts = Array.prototype.slice.call(
-      this.timeListEl.querySelectorAll(".fl-timelist-option"),
+      this.timeListEl.querySelectorAll(
+        ".fl-timelist-option:not(.fl-timelist-option--disabled)",
+      ),
     );
     var idx = allOpts.indexOf(focused);
     if (idx === -1) return;
@@ -649,8 +666,10 @@
         var sel = self.timeListEl.querySelector(
           ".fl-timelist-option--selected",
         );
-        var first = self.timeListEl.querySelector(".fl-timelist-option");
-        if (sel) {
+        var first = self.timeListEl.querySelector(
+          ".fl-timelist-option:not(.fl-timelist-option--disabled)",
+        );
+        if (sel && !sel.disabled) {
           sel.scrollIntoView({ block: "nearest" });
           sel.focus();
         } else if (first) {
