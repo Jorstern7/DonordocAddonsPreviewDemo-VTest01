@@ -45,6 +45,7 @@ function throttle(func, limit) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  initStickyBar();
   initStickyHeader();
   initNavScroll();
   initMobileMenu();
@@ -189,6 +190,114 @@ function initFooterYear() {
   } catch (err) {
     console.error("Footer year init error:", err);
   }
+}
+
+function getStickyBarTopOffsetPx() {
+  try {
+    const raw =
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--sticky-bar-h",
+      ) || "";
+    const n = parseFloat(raw.trim());
+    return Number.isFinite(n) ? n : 0;
+  } catch (_) {
+    return 0;
+  }
+}
+
+window.getStickyBarTopOffsetPx = getStickyBarTopOffsetPx;
+
+function initStickyBar() {
+  const root = document.getElementById("sticky-bar-root");
+  const bar = document.getElementById("sticky-bar");
+  const placeholder = root?.querySelector(".sticky-bar-placeholder");
+  const footer = document.getElementById("footer");
+  const hero = document.querySelector(".section-health");
+  const header = document.getElementById("header");
+
+  if (!root || !bar || !placeholder || !footer || !hero || !header) return;
+
+  const DOCK_BOTTOM_ENTER_PX = 120;
+  const DOCK_BOTTOM_EXIT_PX = 280;
+  let latchBottom = false;
+
+  function setStickyBarCssVar(px) {
+    document.documentElement.style.setProperty(
+      "--sticky-bar-h",
+      `${Math.max(0, px)}px`,
+    );
+  }
+
+  function syncHeroOverlapPadding() {
+    hero.style.paddingTop = `${header.offsetHeight}px`;
+  }
+
+  function computeNextState() {
+    const heroRect = hero.getBoundingClientRect();
+    const docEl = document.documentElement;
+    const vv = window.visualViewport;
+    const vh =
+      vv && typeof vv.height === "number" ? vv.height : window.innerHeight;
+    const scrollBottom = window.scrollY + vh;
+
+    let nearDockBottom =
+      scrollBottom >= docEl.scrollHeight - DOCK_BOTTOM_ENTER_PX;
+
+    const belowDockBottomEscape =
+      scrollBottom < docEl.scrollHeight - DOCK_BOTTOM_EXIT_PX;
+
+    if (latchBottom) {
+      if (belowDockBottomEscape) latchBottom = false;
+    } else if (nearDockBottom) latchBottom = true;
+
+    const atHeroBand = heroRect.top >= -40;
+
+    if (latchBottom) return "bottom";
+    if (atHeroBand) return "top";
+    return "fixed";
+  }
+
+  function syncLayout() {
+    const nextState = computeNextState();
+
+    placeholder.style.height = "0px";
+    placeholder.classList.remove("is-active");
+    footer.style.paddingBottom = "";
+    footer.classList.remove("footer-sticky-bar-dock");
+    bar.classList.remove("sticky-bar-fixed", "sticky-bar-docked-bottom");
+    root.classList.remove("sticky-bar-root-bottom");
+
+    if (footer.contains(root)) {
+      header.before(root);
+    }
+
+    if (nextState === "bottom") {
+      footer.appendChild(root);
+      root.classList.add("sticky-bar-root-bottom");
+      bar.classList.add("sticky-bar-docked-bottom");
+      footer.classList.add("footer-sticky-bar-dock");
+      const hFoot = Math.max(bar.offsetHeight, 1);
+      footer.style.paddingBottom = `${hFoot}px`;
+      setStickyBarCssVar(0);
+    } else if (nextState === "fixed") {
+      bar.classList.add("sticky-bar-fixed");
+      const hFix = Math.max(bar.offsetHeight, 1);
+      placeholder.style.height = `${hFix}px`;
+      placeholder.classList.add("is-active");
+      setStickyBarCssVar(hFix);
+    } else {
+      const hTop = Math.max(bar.offsetHeight, 1);
+      setStickyBarCssVar(hTop);
+    }
+
+    syncHeroOverlapPadding();
+  }
+
+  const throttledSync = throttle(syncLayout, 50);
+  window.addEventListener("scroll", throttledSync, { passive: true });
+  window.addEventListener("resize", syncLayout);
+  window.addEventListener("load", syncLayout);
+  syncLayout();
 }
 
 function initSectionVisibility() {
@@ -358,7 +467,11 @@ function initNavScroll() {
   const getScrollAnchorPx = () => {
     const header = document.getElementById("header");
     const h = header ? header.offsetHeight : 0;
-    return h + 24;
+    const barExtra =
+      typeof window.getStickyBarTopOffsetPx === "function"
+        ? window.getStickyBarTopOffsetPx()
+        : 0;
+    return h + barExtra + 24;
   };
 
   const updateActiveNav = () => {
