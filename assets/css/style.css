@@ -3142,10 +3142,7 @@ main .blog-section .blog-image-loading::after {
   }
 }
 #sticky-bar.sticky-bar-docked-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   z-index: 30;
   margin: 0;
   border-radius: 0;

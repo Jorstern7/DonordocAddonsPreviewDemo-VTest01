@@ -276,8 +276,6 @@ function initStickyBar() {
       root.classList.add("sticky-bar-root-bottom");
       bar.classList.add("sticky-bar-docked-bottom");
       footer.classList.add("footer-sticky-bar-dock");
-      const hFoot = Math.max(bar.offsetHeight, 1);
-      footer.style.paddingBottom = `${hFoot}px`;
       setStickyBarCssVar(0);
     } else if (nextState === "fixed") {
       bar.classList.add("sticky-bar-fixed");
