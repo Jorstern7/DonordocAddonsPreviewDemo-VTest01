@@ -3098,6 +3098,9 @@ main .blog-section .blog-image-loading::after {
   z-index: 10050;
   transition: none;
 }
+#sticky-bar-root.sticky-bar-hidden {
+  display: none;
+}
 
 .sticky-bar-placeholder {
   height: 0;
