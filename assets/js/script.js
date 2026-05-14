@@ -258,6 +258,12 @@ function initStickyBar() {
   }
 
   function syncLayout() {
+    if (root.classList.contains("sticky-bar-hidden")) {
+      setStickyBarCssVar(0);
+      syncHeroOverlapPadding();
+      return;
+    }
+
     const nextState = computeNextState();
 
     placeholder.style.height = "0px";
@@ -512,6 +518,7 @@ function initNavScroll() {
 function initMobileMenu() {
   const toggler = document.querySelector(".navbar-toggler");
   const offcanvasElement = document.getElementById("offcanvasNavbar");
+  const stickyBarRoot = document.getElementById("sticky-bar-root");
   const offcanvasInstance = offcanvasElement
     ? bootstrap.Offcanvas.getOrCreateInstance(offcanvasElement)
     : null;
@@ -537,11 +544,22 @@ function initMobileMenu() {
     });
   });
 
+  if (offcanvasElement && stickyBarRoot) {
+    offcanvasElement.addEventListener("show.bs.offcanvas", () => {
+      stickyBarRoot.classList.add("sticky-bar-hidden");
+      document.documentElement.style.setProperty("--sticky-bar-h", "0px");
+    });
+  }
+
   if (offcanvasElement) {
     offcanvasElement.addEventListener("hidden.bs.offcanvas", () => {
       if (toggler) {
         toggler.classList.remove("opened");
       }
+      if (stickyBarRoot) {
+        stickyBarRoot.classList.remove("sticky-bar-hidden");
+      }
+      window.dispatchEvent(new Event("resize"));
     });
   }
 }
