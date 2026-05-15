@@ -62,6 +62,10 @@ document.addEventListener("DOMContentLoaded", function () {
   initAppointmentMode();
   initAppointmentPickers();
   initSectionVisibility();
+
+  window.addEventListener("load", () => {
+    if (location.hash == "#health-cta") window.scrollTo(0, 0);
+  });
 });
 
 const DISABLED_APPOINTMENT_TIMES = [
